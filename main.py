@@ -34,25 +34,23 @@ if __name__ == "__main__":
         width=utils.width_prct(75),
         height=utils.height_prct(75),
     )
-    center_frame.place(
-        x=utils.width_prct(25),
-        y=utils.height_prct(25)
-    )
-    
+    center_frame.place(x=utils.width_prct(25), y=utils.height_prct(25))
+
     for x in range(st.GRID_SIZE):
         for y in range(st.GRID_SIZE):
             c = Cell(x, y)
             c.create_btn_object(center_frame)
-            c.cell_btn_object.grid(
-                column=x, row=y
-            )
-            
-    print(Cell.all)
-    
+            c.cell_btn_object.grid(column=x, row=y)
+
+    # Cell the label from Cell class
+    Cell.create_cell_count_label(left_frame)
+    Cell.cell_count_label_object.place(
+        x=0, y=0,
+    )
+
     Cell.randomize_mines()
-    for c in Cell.all:
-        print(c.is_mine)
     
+
     Cell.show_all_mines()
     # Run the window
     root.mainloop()

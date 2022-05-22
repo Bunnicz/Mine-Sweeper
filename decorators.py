@@ -9,7 +9,6 @@ Built-in decorators:
 import functools
 import time
 
-
 PLUGINS = dict()  # Dictionary used by @register to store plugins
 
 

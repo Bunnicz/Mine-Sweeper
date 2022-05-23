@@ -1,5 +1,6 @@
-from tkinter import *
 import time
+from tkinter import *
+
 import settings as st
 import utils
 from cell import Cell
@@ -48,18 +49,18 @@ if __name__ == "__main__":
     Cell.create_cell_count_label(top_frame)
     Cell.cell_count_label_object.place(x=utils.width_prct(5), y=utils.height_prct(5))
 
-    # Create elapsed game time label
+    # Create game time label
     Cell.create_time_label(top_frame)
     Cell.game_time_label_object.place(x=utils.width_prct(67), y=utils.height_prct(5))
 
-    # for cell_obj in Cell.all:
-    #     if cell_obj.is_opened:
+    # Init start time and start counting
     Cell.start_time = time.time()
     Cell.count_elapsed_time()
 
     Cell.randomize_mines()
 
     # for debug only
-    Cell.show_all_mines()
+    # Cell.show_all_mines()
+    
     # Run the window
     root.mainloop()

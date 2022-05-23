@@ -16,6 +16,7 @@ class Cell:
     start_time = 0
     game_time = f"{0:03}"
     game_time_label_object = None
+    mine_clicked = False
 
     def __init__(self, x: int, y: int, is_mine: bool = False) -> None:
         self.is_mine = is_mine
@@ -67,9 +68,11 @@ class Cell:
 
     @staticmethod
     def count_elapsed_time():
-        elapsed_time = f"{int(time.time() - Cell.start_time):003}"
-        Cell.game_time_label_object.config(text=elapsed_time)
-        Cell.game_time_label_object.after(1000, Cell.count_elapsed_time)
+        # Updates game time label every 1 sec if game haven't finished
+        Cell.game_time = f"{int(time.time() - Cell.start_time):003}"
+        Cell.game_time_label_object.config(text=Cell.game_time)
+        if Cell.cell_count != st.MINES_COUNT and not Cell.mine_clicked:
+            Cell.game_time_label_object.after(1000, Cell.count_elapsed_time)
 
     @staticmethod
     def show_mine():
@@ -78,57 +81,49 @@ class Cell:
                 cell.cell_btn_object.configure(bg="red", relief="sunken")
 
     def left_click_actions(self, event) -> None:
+        self.is_opened = True
         if self.is_mine:
+            Cell.mine_clicked = True  # Var for stopping timer only!
             self.show_mine()
-            tkinter.messagebox.showinfo("Game Over", "You clicked on a mine")
+            tkinter.messagebox.showinfo(
+                "Game Over",
+                f"You clicked on a mine.\nGame finished in {Cell.game_time} sec",
+            )
             sys.exit()
         else:
+
+            if self.surrounded_cells_mines_lenght == 0:
+                for cell_obj in self.surrounded_cells:
+                    if not cell_obj.is_opened:
+                        cell_obj.left_click_actions("<Button-1>")
+                    cell_obj.show_cell()
             self.show_cell()
-            self.show_surronded_cells()
 
             # If Mines count is equal to the cells left count, player won
             if Cell.cell_count == st.MINES_COUNT:
                 tkinter.messagebox.showinfo(
-                    "Game Over", "Congratulations! You won the game!"
+                    "Game Over",
+                    f"Congratulations! You won the game!\nGame finished in {Cell.game_time} sec!",
                 )
                 sys.exit()
 
         # Cancel left and Right click events if cell is already opened:
-        self.cell_btn_object.unbind("<Button-1>")
-        self.cell_btn_object.unbind("<Button-3>")
+        # self.cell_btn_object.unbind("<Button-1>")
+        # self.cell_btn_object.unbind("<Button-3>")
 
-    def show_surronded_cells(self):
-        # show 3 "levels" of cells with surrounding mines
-        # obj_level = [ "cell_obj"+ str(i) for i in range(1,9)]
-        # for cell_obj in obj_level:
-        #     if self.surrounded_cells_mines_lenght == 0:
-        #         for cell_obj in self.surrounded_cells:
-        #             cell_obj.show_cell()
-
-        if self.surrounded_cells_mines_lenght == 0:
-            for cell_obj_1 in self.surrounded_cells:
-                cell_obj_1.show_cell()
-                if cell_obj_1.surrounded_cells_mines_lenght == 0:
-                    for cell_obj_2 in cell_obj_1.surrounded_cells:
-                        cell_obj_2.show_cell()
-                        if cell_obj_2.surrounded_cells_mines_lenght == 0:
-                            for cell_obj_3 in cell_obj_2.surrounded_cells:
-                                cell_obj_3.show_cell()
-                                if cell_obj_3.surrounded_cells_mines_lenght == 0:
-                                    for cell_obj_4 in cell_obj_3.surrounded_cells:
-                                        cell_obj_4.show_cell()
-                                        if cell_obj_4.surrounded_cells_mines_lenght == 0:
-                                            for cell_obj_5 in cell_obj_4.surrounded_cells:
-                                                cell_obj_5.show_cell()
-                                                if cell_obj_5.surrounded_cells_mines_lenght == 0:
-                                                    for cell_obj_6 in cell_obj_5.surrounded_cells:
-                                                        cell_obj_6.show_cell()
-                                                        if cell_obj_6.surrounded_cells_mines_lenght == 0:
-                                                            for cell_obj_7 in cell_obj_6.surrounded_cells:
-                                                                cell_obj_7.show_cell()
-                                                                if cell_obj_7.surrounded_cells_mines_lenght == 0:
-                                                                    for cell_obj_8 in cell_obj_7.surrounded_cells:
-                                                                        cell_obj_8.show_cell()
+    def show_cell(self):
+        if self.is_opened:
+            x = 0
+            self.configure_cell_btn_object_text()
+            for cell_obj in Cell.all:
+                if cell_obj.is_opened:
+                    x += 1
+            Cell.cell_count = st.CELL_COUNT - x
+            # Replace the text of cell count label with the newer count
+            if Cell.cell_count_label_object:
+                Cell.cell_count_label_object.configure(
+                    text=f"{Cell.cell_count}",  # Reapeted in label init
+                )
 
     def right_click_actions(self, event) -> None:
         if not self.is_mine_candidate and not self.is_opened:
@@ -190,24 +185,8 @@ class Cell:
                 cell_fg = cell_fg_list[i]
 
         self.cell_btn_object.configure(
-            text=cell_text,
-            fg=cell_fg,
-            relief="sunken",
+            text=cell_text, fg=cell_fg, relief="sunken", bg="SystemButtonFace"
         )
-
-    def show_cell(self):
-        if not self.is_opened:
-            Cell.cell_count -= 1
-            self.configure_cell_btn_object_text()
-            # Replace the text of cell count label with the newer count
-            if Cell.cell_count_label_object:
-                Cell.cell_count_label_object.configure(
-                    text=f"{Cell.cell_count}",  # Reapeted in label init
-                )
-            # If this was a mine candidate, change bg back to normal
-            self.cell_btn_object.configure(bg="SystemButtonFace", relief="sunken")
-        # Mark the cell as opened (Use it as the last line of this method)
-        self.is_opened = True
 
     @staticmethod
     def randomize_mines():

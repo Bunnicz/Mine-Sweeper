@@ -1,10 +1,10 @@
 # import ctypes
+import os
 import random
-import sys, os
+import sys
 import time
 import tkinter.messagebox
 from tkinter import *
-from typing import List
 
 import settings as st
 

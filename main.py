@@ -13,41 +13,28 @@ if __name__ == "__main__":
     root.geometry(f"{st.WIDTH}x{st.HEIGHT}")
     root.resizable(False, False)  # width, height
 
-    top_frame = Frame(
-        root,
-        # bg="red",  # change later to black
-        width=st.WIDTH,
-        height=utils.height_prct(25),
-    )
+    # Create top frame for cell count, emoji face button and timer
+    top_frame = Frame(root, width=st.WIDTH, height=utils.height_prct(25))
     top_frame.place(x=0, y=0)
 
-    game_tittle = Button(
-        top_frame,
-        text=":)",
-        width=2,
-        height=1,
-        font=("", 17),
-    )
-    game_tittle.place(x=utils.width_prct(40), y=utils.height_prct(5))
-
-    center_frame = Frame(
-        root,
-        bg="black",  # change later to black
-        width=st.WIDTH,
-        height=utils.height_prct(75),
-    )
-    center_frame.place(x=utils.width_prct(15), y=utils.height_prct(25))
+    # Create main frame for the minesweeper game with buttons as cells
+    main_frame = Frame(root, width=st.WIDTH, height=utils.height_prct(75))
+    main_frame.place(x=utils.width_prct(15), y=utils.height_prct(25))
 
     # Create grid of cells objects
     for x in range(st.GRID_SIZE):
         for y in range(st.GRID_SIZE):
             c = Cell(x, y)
-            c.create_btn_object(center_frame)
+            c.create_btn_object(main_frame)
             c.cell_btn_object.grid(column=x, row=y)
 
     # Create cell count label
     Cell.create_cell_count_label(top_frame)
     Cell.cell_count_label_object.place(x=utils.width_prct(5), y=utils.height_prct(5))
+
+    # Create emoji face button
+    Cell.create_face_btn_object(top_frame)
+    Cell.face_btn_object.place(x=utils.width_prct(40), y=utils.height_prct(5))
 
     # Create game time label
     Cell.create_time_label(top_frame)
@@ -57,10 +44,11 @@ if __name__ == "__main__":
     Cell.start_time = time.time()
     Cell.count_elapsed_time()
 
+    # Randomly choose mines and asign them to cell objects
     Cell.randomize_mines()
 
-    # for debug only
+    # Show all generated mines - for debug only -
     # Cell.show_all_mines()
-    
+
     # Run the window
     root.mainloop()

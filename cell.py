@@ -142,10 +142,10 @@ class Cell:
 
     def right_click_actions(self, event) -> None:
         if not self.is_mine_candidate and not self.is_opened:
-            self.cell_btn_object.configure(bg="orange")
+            self.cell_btn_object.configure(text="🏁", bg="orange")
             self.is_mine_candidate = True
         else:
-            self.cell_btn_object.configure(bg="SystemButtonFace")
+            self.cell_btn_object.configure(text="", bg="SystemButtonFace")
             self.is_mine_candidate = False
 
     @staticmethod

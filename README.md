@@ -42,7 +42,7 @@
 
 <!-- DISCLAIMER -->
 ## Disclaimer
-Project is based on youtube tuturial (Python Game Development Project Using OOP – Minesweeper Tutorial (w/ Tkinter)) by freeCodeCamp.org
+Project is based on youtube tutorial (Python Game Development Project Using OOP – Minesweeper Tutorial (w/ Tkinter)) by freeCodeCamp.org
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
